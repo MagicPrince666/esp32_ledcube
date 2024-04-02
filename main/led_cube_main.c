@@ -182,6 +182,8 @@ void app_main(void)
     //Initialize the LCD
     hc595_init(spi);
 
+    init_gpio();
+
     uint32_t ret_num = 0;
     uint8_t result[EXAMPLE_READ_LEN] = {0};
     memset(result, 0xcc, EXAMPLE_READ_LEN);

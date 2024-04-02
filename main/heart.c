@@ -1,3 +1,4 @@
+#include "freertos/FreeRTOS.h"
 #include "heart.h"
 #include "contrl.h"
 #include <inttypes.h>
@@ -57,9 +58,9 @@ void blew_heart(int tv) {
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }  
     }
     times = tv;
@@ -70,9 +71,9 @@ void blew_heart(int tv) {
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }  
     }
     times = tv;
@@ -103,9 +104,11 @@ void _my_heart(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(800 - 100*z);
+        // usleep(800 - 100*z);
+        vTaskDelay(8 - z / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100 + 100*z);
+        vTaskDelay(10 + z / portTICK_PERIOD_MS);
+        // usleep(100 + 100*z);
       }
     }
     times = tv;
@@ -141,9 +144,9 @@ void _heartbeat(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }
     }
     times = tv;
@@ -175,9 +178,9 @@ void _fail_heart(int tv)
         }
         hc595out();
         cen_on(y);
-        //usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(200);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }
     }
     times = tv;
@@ -206,9 +209,9 @@ void for_lynette_(int tv)
           }
           hc595out();
           cen_on(y);
-          usleep(200);
+          vTaskDelay(10 / portTICK_PERIOD_MS);
           cen_on(8);
-          usleep(100);
+          vTaskDelay(5 / portTICK_PERIOD_MS);
         }
       }
       times = tv;

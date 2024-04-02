@@ -1,3 +1,4 @@
+#include "freertos/FreeRTOS.h"
 #include "mycube.h"
 #include "contrl.h"
 
@@ -94,9 +95,9 @@ void mycube(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }  
     }
     times = tv;
@@ -177,37 +178,13 @@ void rotating_mycube_(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }  
     }
     times = tv;
   }
-#if 0
-  int ctl = 0;
-  for(z = 0; z < 8; z++) {
-    while(times--) {
-      for(y = 0; y < 8; y++) {
-        for(x = 0; x < 8; x++) {
-            hc595(cube[y][x]);
-        }
-        hc595out();
-        ctl = z + y;
-        if (ctl <= 7) {
-          cen_on(ctl);
-        } else {
-          cen_on(ctl - 8);
-        }
-        
-        usleep(200);
-        cen_on(8);
-        usleep(100);
-      }  
-    }
-    times = tv;
-  }
-#endif
 }
 
 void _sin_cube(const unsigned char po[][8][8], unsigned int cnt, int tv) {
@@ -221,9 +198,9 @@ void _sin_cube(const unsigned char po[][8][8], unsigned int cnt, int tv) {
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }
 	  }
     times = tv;

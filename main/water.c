@@ -3,6 +3,7 @@
  * 上善若水
  * 
  ***********************************************/
+#include "freertos/FreeRTOS.h"
 #include "water.h"
 #include "contrl.h"
 
@@ -30,9 +31,9 @@ void cube_water1(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }
     }
     cube[z][3] = 0x00;
@@ -89,9 +90,9 @@ void cube_water1(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }  
     }
     times = tv;
@@ -123,9 +124,9 @@ void cube_water2(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }
     }
     cube[z][3] = 0x00;
@@ -193,9 +194,9 @@ void cube_water2(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }  
     }
     times = tv;
@@ -232,9 +233,9 @@ void rain_cube(int tv)
         }
         hc595out();
         cen_on(y);
-        usleep(200);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         cen_on(8);
-        usleep(100);
+        vTaskDelay(5 / portTICK_PERIOD_MS);
       }  
     }
     times = tv;

@@ -49,7 +49,7 @@ int init_gpio(void)
     return 0;
 }
 
-void hc595(unsigned char dat)
+void hc595_write(uint8_t dat)
 {
     unsigned char i;
     for (i = 0; i < 8; i++) {
