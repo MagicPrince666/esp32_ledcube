@@ -58,9 +58,8 @@ void blew_heart(int tv) {
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(2);
+        usleep(500);
         cen_on(8);
-        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -71,9 +70,8 @@ void blew_heart(int tv) {
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(2);
+        usleep(500);
         cen_on(8);
-        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -104,11 +102,9 @@ void _my_heart(int tv)
         }
         hc595out();
         cen_on(y);
-        // usleep(800 - 100*z);
-        vTaskDelay(8 - z / portTICK_PERIOD_MS);
+        usleep(800 - 100*z);
         cen_on(8);
-        vTaskDelay(10 + z / portTICK_PERIOD_MS);
-        // usleep(100 + 100*z);
+        usleep(100 + 100*z);
       }
     }
     times = tv;
@@ -144,9 +140,8 @@ void _heartbeat(int tv)
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(2);
+        usleep(500);
         cen_on(8);
-        vTaskDelay(1);
       }
     }
     times = tv;
@@ -178,9 +173,8 @@ void _fail_heart(int tv)
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(2);
+        usleep(500);
         cen_on(8);
-        vTaskDelay(1);
       }
     }
     times = tv;
@@ -209,9 +203,8 @@ void for_lynette_(int tv)
           }
           hc595out();
           cen_on(y);
-          vTaskDelay(2);
+          usleep(500);
           cen_on(8);
-          vTaskDelay(1);
         }
       }
       times = tv;

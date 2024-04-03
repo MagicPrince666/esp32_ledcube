@@ -7,17 +7,16 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include "contrl.h"
-#include "water.h"
-#include "mycube.h"
-#include "move.h"
-#include "heart.h"
 #include "driver/gpio.h"
 #include "esp_adc/adc_continuous.h"
 #include "esp_log.h"
 #include "esp_system.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "heart.h"
+#include "move.h"
 #include "mycube.h"
+#include "water.h"
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -106,9 +105,8 @@ void _display(u_int16_t time, u_int8_t dat)
                 }
                 hc595out();
                 cen_on(y);
-                vTaskDelay(2);
+                usleep(500);
                 cen_on(8);
-                vTaskDelay(1);
             }
             times++;
         }
@@ -137,9 +135,8 @@ void general(const unsigned char po[][8][8], unsigned int cnt, int tv)
                 }
                 hc595out();
                 cen_on(y);
-                vTaskDelay(2);
+                usleep(500);
                 cen_on(8);
-                vTaskDelay(1);
             }
         }
         times = tv;
@@ -159,9 +156,8 @@ void _hourglass(const unsigned char po[][8][8], unsigned int cnt, int tv)
                 }
                 hc595out();
                 cen_on(y);
-                vTaskDelay(2);
+                usleep(500);
                 cen_on(8);
-                vTaskDelay(1);
             }
         }
         times = tv;
@@ -226,9 +222,8 @@ void displayking(int tv)
                     }
                     hc595out();
                     cen_on(y);
-                    vTaskDelay(2);
+                    usleep(500);
                     cen_on(8);
-                    vTaskDelay(1);
                 }
             }
             times = tv;
@@ -253,7 +248,7 @@ static void adc_read_task(void *param)
     };
     ESP_ERROR_CHECK(adc_continuous_register_event_callbacks(handle, &cbs, NULL));
     ESP_ERROR_CHECK(adc_continuous_start(handle));
-    
+
     while (1) {
         /**
          * This is to show you the way to use the ADC continuous mode driver event callback.
@@ -304,23 +299,28 @@ static void cube_task(void *param)
 
     while (1) {
         // rotating_mycube_(1);
-        // mycube(5); // 上善若水
-        for(int i = 0; i < 3; i++) { //落下一滴眼泪 两滴 三滴
-            cube_water1(3);
+        mycube(30); // 上善若水
+        for (int i = 0; i < 3; i++) { // 落下一滴眼泪 两滴 三滴
+            cube_water1(18);
         }
-        for(int i = 0; i < 3; i++) { //顿时下起了大雨
-            rain_cube(3);
+        for (int i = 0; i < 5; i++) { // 顿时下起了大雨
+            rain_cube(20);
         }
-        for(int i = 0; i < 3; i++) { //浪涛翻涌
-            _sin_cube(sin_cube_table, 14, 2);
+        rotating_mycube_(20);         // 扭曲的升起
+        for (int i = 0; i < 3; i++) { // 旋转着
+            general(warping, 15, 20);
         }
+        general(IVU_1, 21, 20);
+        // for(int i = 0; i < 3; i++) { //浪涛翻涌
+        //     _sin_cube(sin_cube_table, 14, 2);
+        // }
     }
 }
 
 void app_main(void)
 {
-    xTaskCreate(adc_read_task, "adc_read_task", 4*1024, NULL, 5, NULL);
-    xTaskCreate(cube_task, "cube_task", 4*1024, NULL, 5, NULL);
+    xTaskCreate(adc_read_task, "adc_read_task", 4 * 1024, NULL, 5, NULL);
+    xTaskCreate(cube_task, "cube_task", 4 * 1024, NULL, 5, NULL);
     // 启动调度器
     vTaskStartScheduler();
 }

@@ -33,9 +33,8 @@ void cube_water1(int tv)
                 hc595_write_buff(cube[y]);
 #endif
                 cen_on(y);
-                vTaskDelay(10 / portTICK_PERIOD_MS);
+                usleep(500);
                 cen_on(8);
-                // vTaskDelay(5 / portTICK_PERIOD_MS);
             }
         }
         cube[z][3] = 0x00;
@@ -98,9 +97,8 @@ void cube_water1(int tv)
                 }
                 hc595out();
                 cen_on(y);
-                vTaskDelay(10 / portTICK_PERIOD_MS);
+                usleep(500);
                 cen_on(8);
-                // vTaskDelay(5 / portTICK_PERIOD_MS);
             }
         }
         times = tv;
@@ -131,9 +129,8 @@ void cube_water2(int tv)
                 }
                 hc595out();
                 cen_on(y);
-                vTaskDelay(2);
+                usleep(100);
                 cen_on(8);
-                vTaskDelay(1);
             }
         }
         cube[z][3] = 0x00;
@@ -206,9 +203,8 @@ void cube_water2(int tv)
                 }
                 hc595out();
                 cen_on(y);
-                vTaskDelay(2);
+                usleep(100);
                 cen_on(8);
-                vTaskDelay(1);
             }
         }
         times = tv;
@@ -243,9 +239,8 @@ void rain_cube(int tv)
                 }
                 hc595out();
                 cen_on(y);
-                vTaskDelay(2);
+                usleep(100);
                 cen_on(8);
-                vTaskDelay(1);
             }
         }
         times = tv;

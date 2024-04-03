@@ -95,9 +95,8 @@ void mycube(int tv)
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(2);
+        usleep(500);
         cen_on(8);
-        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -178,9 +177,8 @@ void rotating_mycube_(int tv)
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(2);
+        usleep(500);
         cen_on(8);
-        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -198,9 +196,8 @@ void _sin_cube(const unsigned char po[][8][8], unsigned int cnt, int tv) {
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(2);
+        usleep(500);
         cen_on(8);
-        vTaskDelay(1);
       }
 	  }
     times = tv;
