@@ -99,40 +99,40 @@ void cen_on(u_int8_t y)
 {
     switch (y) {
     case 0x00: {
-        gpio_set_level(gpio_layer[7], 1);
-        gpio_set_level(gpio_layer[0], 0);
+        gpio_set_level(gpio_layer[7], 0);
+        gpio_set_level(gpio_layer[0], 1);
     } break;
     case 0x01: {
-        gpio_set_level(gpio_layer[0], 1);
-        gpio_set_level(gpio_layer[1], 0);
+        gpio_set_level(gpio_layer[0], 0);
+        gpio_set_level(gpio_layer[1], 1);
     } break;
     case 0x02: {
-        gpio_set_level(gpio_layer[1], 1);
-        gpio_set_level(gpio_layer[2], 0);
+        gpio_set_level(gpio_layer[1], 0);
+        gpio_set_level(gpio_layer[2], 1);
     } break;
     case 0x03: {
-        gpio_set_level(gpio_layer[2], 1);
-        gpio_set_level(gpio_layer[3], 0);
+        gpio_set_level(gpio_layer[2], 0);
+        gpio_set_level(gpio_layer[3], 1);
     } break;
     case 0x04: {
-        gpio_set_level(gpio_layer[3], 1);
-        gpio_set_level(gpio_layer[4], 0);
+        gpio_set_level(gpio_layer[3], 0);
+        gpio_set_level(gpio_layer[4], 1);
     } break;
     case 0x05: {
-        gpio_set_level(gpio_layer[4], 1);
-        gpio_set_level(gpio_layer[5], 0);
+        gpio_set_level(gpio_layer[4], 0);
+        gpio_set_level(gpio_layer[5], 1);
     } break;
     case 0x06: {
-        gpio_set_level(gpio_layer[5], 1);
-        gpio_set_level(gpio_layer[6], 0);
+        gpio_set_level(gpio_layer[5], 0);
+        gpio_set_level(gpio_layer[6], 1);
     } break;
     case 0x07: {
-        gpio_set_level(gpio_layer[6], 1);
-        gpio_set_level(gpio_layer[7], 0);
+        gpio_set_level(gpio_layer[6], 0);
+        gpio_set_level(gpio_layer[7], 1);
     } break;
     case 0x08: {
         for (int i = 0; i < 8; i++) {
-            gpio_set_level(gpio_layer[i], 1);
+            gpio_set_level(gpio_layer[i], 0);
         }
     } break;
     default:
