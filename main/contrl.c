@@ -179,6 +179,11 @@ void cen_on(u_int8_t y)
             gpio_set_level(gpio_layer[i], 0);
         }
     } break;
+    case 0x09: {
+        for (int i = 0; i < 8; i++) {
+            gpio_set_level(gpio_layer[i], 1);
+        }
+    } break;
     default:
         break;
     }

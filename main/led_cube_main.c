@@ -9,8 +9,10 @@
 #include "contrl.h"
 #include "driver/gpio.h"
 #include "esp_adc/adc_continuous.h"
+#include "esp_private/esp_int_wdt.h"
 #include "esp_log.h"
 #include "esp_system.h"
+#include "esp_task_wdt.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "heart.h"
@@ -49,6 +51,8 @@ static adc_channel_t channel[2] = {ADC_CHANNEL_0, ADC_CHANNEL_3};
 
 static TaskHandle_t s_task_handle;
 static const char *TAG = "EXAMPLE";
+
+uint8_t g_mode = 0;
 
 static bool IRAM_ATTR s_conv_done_cb(adc_continuous_handle_t handle, const adc_continuous_evt_data_t *edata, void *user_data)
 {
@@ -104,9 +108,9 @@ void _display(u_int16_t time, u_int8_t dat)
                     hc595_write(dat);
                 }
                 hc595out();
-                cen_on(y);
+                // cen_on(y);
                 usleep(500);
-                cen_on(8);
+                cen_on(9);
             }
             times++;
         }
@@ -262,6 +266,11 @@ static void adc_read_task(void *param)
 
         char unit[] = EXAMPLE_ADC_UNIT_STR(EXAMPLE_ADC_UNIT);
         while (1) {
+            if (gpio_get_level(PIN_GPIO_KEY) == 0) {
+                ESP_LOGI(TAG, "Button pressed!");
+            } else {
+                ESP_LOGI(TAG, "Button relese!");
+            }
             ret = adc_continuous_read(handle, result, EXAMPLE_READ_LEN, &ret_num, 0);
             if (ret == ESP_OK) {
                 ESP_LOGI("TASK", "ret is %x, ret_num is %" PRIu32 " bytes", ret, ret_num);
@@ -281,7 +290,7 @@ static void adc_read_task(void *param)
                  * To avoid a task watchdog timeout, add a delay here. When you replace the way you process the data,
                  * usually you don't need this delay (as this task will block for a while).
                  */
-                vTaskDelay(1);
+                vTaskDelay(100);
             } else if (ret == ESP_ERR_TIMEOUT) {
                 // We try to read `EXAMPLE_READ_LEN` until API returns timeout, which means there's no available data
                 break;
@@ -298,27 +307,41 @@ static void cube_task(void *param)
     init_gpio();
 
     while (1) {
-        // rotating_mycube_(1);
-        mycube(30); // 上善若水
-        for (int i = 0; i < 3; i++) { // 落下一滴眼泪 两滴 三滴
-            cube_water1(18);
+        if (g_mode == 1) {
+            _display(1000, 0xFF);
+        } else {
+            // rotating_mycube_(1);
+            for(int i = 0; i < 5; i++) {
+                blew_heart(30);
+            }
+            // mycube(30); // 上善若水
+            for (int i = 0; i < 3; i++) {
+                cube_water1(18);
+            }
+            for (int i = 0; i < 5; i++) {
+                rain_cube(20);
+            }
+            rotating_mycube_(20);
+            for (int i = 0; i < 3; i++) {
+                general(warping, 15, 20);
+            }
+            general(IVU_1, 21, 20);
+            for(int i = 0; i < 3; i++) {
+                _sin_cube(sin_cube_table, 14, 20);
+            }
+            displayking(20);
+            _hourglass( king,8,20);
+            general(shandian, 22, 20);
+            general(cube, 26, 20);
+            general(cube2, 8, 20);
         }
-        for (int i = 0; i < 5; i++) { // 顿时下起了大雨
-            rain_cube(20);
-        }
-        rotating_mycube_(20);         // 扭曲的升起
-        for (int i = 0; i < 3; i++) { // 旋转着
-            general(warping, 15, 20);
-        }
-        general(IVU_1, 21, 20);
-        // for(int i = 0; i < 3; i++) { //浪涛翻涌
-        //     _sin_cube(sin_cube_table, 14, 2);
-        // }
     }
 }
 
 void app_main(void)
 {
+    gpio_set_direction(PIN_GPIO_KEY, GPIO_MODE_INPUT);
+    gpio_set_pull_mode(PIN_GPIO_KEY, GPIO_PULLUP_ONLY);
     xTaskCreate(adc_read_task, "adc_read_task", 4 * 1024, NULL, 5, NULL);
     xTaskCreate(cube_task, "cube_task", 4 * 1024, NULL, 5, NULL);
     // 启动调度器
