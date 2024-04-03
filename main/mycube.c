@@ -91,13 +91,13 @@ void mycube(int tv)
     while(times--){
       for(y = 0; y < 8; y++){
         for(x = 0; x < 8; x++){
-          hc595(cube[y][x]);
+          hc595_write(cube[y][x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -174,13 +174,13 @@ void rotating_mycube_(int tv)
     while(times--) {
       for(y = 0; y < 8; y++) {
         for(x = 0; x < 8; x++) {
-          hc595(cube[y][x]);
+          hc595_write(cube[y][x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -194,13 +194,13 @@ void _sin_cube(const unsigned char po[][8][8], unsigned int cnt, int tv) {
     while(times--) {
       for(y = 0; y < 8; y++){
         for(x = 0; x < 8; x++){
-          hc595(po[z][7-y][7-x]);
+          hc595_write(po[z][7-y][7-x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }
 	  }
     times = tv;

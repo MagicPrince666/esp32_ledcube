@@ -27,13 +27,13 @@ void cube_water1(int tv)
     while(times--){
       for(y = 0; y < 8; y++){
         for(x = 0; x < 8; x++){
-          hc595(cube[y][x]);
+          hc595_write(cube[y][x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }
     }
     cube[z][3] = 0x00;
@@ -86,13 +86,13 @@ void cube_water1(int tv)
     while(times--){
       for(y = 0; y < 8; y++){
         for(x = 0; x < 8; x++){
-          hc595(cube[y][x]);
+          hc595_write(cube[y][x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -120,13 +120,13 @@ void cube_water2(int tv)
     while(times--){
       for(y = 0; y < 8; y++){
         for(x = 0; x < 8; x++){
-          hc595(cube[y][x]);
+          hc595_write(cube[y][x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }
     }
     cube[z][3] = 0x00;
@@ -190,13 +190,13 @@ void cube_water2(int tv)
     while(times--){
       for(y = 0; y < 8; y++){
         for(x = 0; x < 8; x++){
-          hc595(cube[y][x]);
+          hc595_write(cube[y][x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -225,17 +225,17 @@ void rain_cube(int tv)
         for(x = 0; x < 8; x++) {
           ctl = 8 - z + y;
           if(ctl <= 7)
-            hc595(rain[ctl][x]);
+            hc595_write(rain[ctl][x]);
           else{
-            hc595(rain[ctl - 8][x]);
+            hc595_write(rain[ctl - 8][x]);
           }
           
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }  
     }
     times = tv;

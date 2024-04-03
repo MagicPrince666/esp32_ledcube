@@ -14,7 +14,7 @@
 #include <signal.h>
 
 int init_gpio(void);
-void hc595(uint8_t dat);
+void hc595_write(uint8_t dat);
 void hc595out();
 void cen_on(u_int8_t y);
 int cube_close(void);

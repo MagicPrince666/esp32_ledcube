@@ -54,26 +54,26 @@ void blew_heart(int tv) {
     while(times--) {
       for(y = 0; y < 8; y++) {
         for(x = 0; x < 8; x++) {
-            hc595(heart[0][7-y][7-x]);
+            hc595_write(heart[0][7-y][7-x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }  
     }
     times = tv;
     while(times--) {
       for(y = 0; y < 8; y++) {
         for(x = 0; x < 8; x++) {
-            hc595(heart[1][7-y][7-x]);
+            hc595_write(heart[1][7-y][7-x]);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }  
     }
     times = tv;
@@ -100,7 +100,7 @@ void _my_heart(int tv)
     while(times--) {
       for(y = 0; y < 8; y++) {
         for(x = 0; x < 8; x++) {
-          hc595(heart[7-y][7-x]);
+          hc595_write(heart[7-y][7-x]);
         }
         hc595out();
         cen_on(y);
@@ -136,17 +136,17 @@ void _heartbeat(int tv)
         for(x = 0; x < 8; x++) {
           if(z%2 == 1) {
             if(x<7)
-              hc595(heart[y][x+1]);
-            else hc595(0);
+              hc595_write(heart[y][x+1]);
+            else hc595_write(0);
           } else {
-            hc595(heart[y][x]);
+            hc595_write(heart[y][x]);
           }
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }
     }
     times = tv;
@@ -173,14 +173,14 @@ void _fail_heart(int tv)
       for(y = 0; y < 8; y++) {
         for(x = 0; x < 8; x++) {
             if(y > z)
-              hc595(heart[y-z][x]);
-            else hc595(0);
+              hc595_write(heart[y-z][x]);
+            else hc595_write(0);
         }
         hc595out();
         cen_on(y);
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(2);
         cen_on(8);
-        vTaskDelay(5 / portTICK_PERIOD_MS);
+        vTaskDelay(1);
       }
     }
     times = tv;
@@ -205,13 +205,13 @@ void for_lynette_(int tv)
           cube[y][1]  = dat;
 
           for(x = 0; x < 8; x++) {//面
-            hc595(cube[y][x]);//线
+            hc595_write(cube[y][x]);//线
           }
           hc595out();
           cen_on(y);
-          vTaskDelay(10 / portTICK_PERIOD_MS);
+          vTaskDelay(2);
           cen_on(8);
-          vTaskDelay(5 / portTICK_PERIOD_MS);
+          vTaskDelay(1);
         }
       }
       times = tv;
