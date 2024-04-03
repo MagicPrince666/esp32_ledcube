@@ -27,9 +27,33 @@ spi_device_handle_t g_spi_handle;
 
 int init_gpio(void)
 {
+#ifdef USE_SPI_CTRL
+    esp_err_t ret;
+    spi_bus_config_t buscfg = {
+        .miso_io_num = PIN_NUM_MISO,
+        .mosi_io_num = PIN_NUM_MOSI,
+        .sclk_io_num = PIN_NUM_CLK,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+        .max_transfer_sz = 64
+    };
+    spi_device_interface_config_t devcfg = {
+        .clock_speed_hz = 20 * 1000 * 1000,     // Clock out at 10 MHz
+        .mode = 0,                              // SPI mode 0
+        .spics_io_num = PIN_NUM_CS,             // CS pin
+        .queue_size = 7,                        // We want to be able to queue 7 transactions at a time
+    };
+    //Initialize the SPI bus
+    ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
+    ESP_ERROR_CHECK(ret);
+    //Attach the LCD to the SPI bus
+    ret = spi_bus_add_device(SPI2_HOST, &devcfg, &g_spi_handle);
+    ESP_ERROR_CHECK(ret);
+#else
     hc595_dat = PIN_NUM_MOSI;
     hc595_sh  = PIN_NUM_CLK;
     hc595_st  = PIN_NUM_CS;
+#endif
 
     gpio_layer[0] = PIN_FLOW1;
     gpio_layer[1] = PIN_FLOW2;
@@ -53,30 +77,6 @@ int init_gpio(void)
     io_conf.pull_up_en = true;
 
     gpio_config(&io_conf);
-
-#ifdef USE_SPI_CTRL
-    esp_err_t ret;
-    spi_bus_config_t buscfg = {
-        .miso_io_num = PIN_NUM_MISO,
-        .mosi_io_num = PIN_NUM_MOSI,
-        .sclk_io_num = PIN_NUM_CLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .max_transfer_sz = 64
-    };
-    spi_device_interface_config_t devcfg = {
-        .clock_speed_hz = 20 * 1000 * 1000,     // Clock out at 10 MHz
-        .mode = 0,                              // SPI mode 0
-        .spics_io_num = PIN_NUM_CS,             // CS pin
-        .queue_size = 7,                        // We want to be able to queue 7 transactions at a time
-    };
-    //Initialize the SPI bus
-    ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
-    ESP_ERROR_CHECK(ret);
-    //Attach the LCD to the SPI bus
-    ret = spi_bus_add_device(SPI2_HOST, &devcfg, &g_spi_handle);
-    ESP_ERROR_CHECK(ret);
-#endif
 
     return 0;
 }
@@ -110,8 +110,10 @@ void hc595_write(uint8_t dat)
 
 void hc595out()
 {
+#ifndef USE_SPI_CTRL
     gpio_set_level(hc595_st, 1);
     gpio_set_level(hc595_st, 0);
+#endif
 }
 
 void cen_on(u_int8_t y)
