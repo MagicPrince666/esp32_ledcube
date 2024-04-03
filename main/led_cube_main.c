@@ -236,11 +236,9 @@ void displayking(int tv)
     }
 }
 
-void app_main(void)
+static void adc_read_task(void *param)
 {
     esp_err_t ret;
-    init_gpio();
-
     uint32_t ret_num                 = 0;
     uint8_t result[EXAMPLE_READ_LEN] = {0};
     memset(result, 0xcc, EXAMPLE_READ_LEN);
@@ -255,9 +253,8 @@ void app_main(void)
     };
     ESP_ERROR_CHECK(adc_continuous_register_event_callbacks(handle, &cbs, NULL));
     ESP_ERROR_CHECK(adc_continuous_start(handle));
-
+    
     while (1) {
-
         /**
          * This is to show you the way to use the ADC continuous mode driver event callback.
          * This `ulTaskNotifyTake` will block when the data processing in the task is fast.
@@ -269,19 +266,7 @@ void app_main(void)
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
         char unit[] = EXAMPLE_ADC_UNIT_STR(EXAMPLE_ADC_UNIT);
-
         while (1) {
-            // rotating_mycube_(1);
-            // mycube(5); // 上善若水
-            for(int i = 0; i < 3; i++) { //落下一滴眼泪 两滴 三滴
-                cube_water1(3);
-            }
-            for(int i = 0; i < 3; i++) { //顿时下起了大雨
-                rain_cube(3);
-            }
-            for(int i = 0; i < 3; i++) { //浪涛翻涌
-                _sin_cube(sin_cube_table, 14, 2);
-            }
             ret = adc_continuous_read(handle, result, EXAMPLE_READ_LEN, &ret_num, 0);
             if (ret == ESP_OK) {
                 ESP_LOGI("TASK", "ret is %x, ret_num is %" PRIu32 " bytes", ret, ret_num);
@@ -301,7 +286,7 @@ void app_main(void)
                  * To avoid a task watchdog timeout, add a delay here. When you replace the way you process the data,
                  * usually you don't need this delay (as this task will block for a while).
                  */
-                // vTaskDelay(1);
+                vTaskDelay(1);
             } else if (ret == ESP_ERR_TIMEOUT) {
                 // We try to read `EXAMPLE_READ_LEN` until API returns timeout, which means there's no available data
                 break;
@@ -311,4 +296,31 @@ void app_main(void)
 
     ESP_ERROR_CHECK(adc_continuous_stop(handle));
     ESP_ERROR_CHECK(adc_continuous_deinit(handle));
+}
+
+static void cube_task(void *param)
+{
+    init_gpio();
+
+    while (1) {
+        // rotating_mycube_(1);
+        // mycube(5); // 上善若水
+        for(int i = 0; i < 3; i++) { //落下一滴眼泪 两滴 三滴
+            cube_water1(3);
+        }
+        for(int i = 0; i < 3; i++) { //顿时下起了大雨
+            rain_cube(3);
+        }
+        for(int i = 0; i < 3; i++) { //浪涛翻涌
+            _sin_cube(sin_cube_table, 14, 2);
+        }
+    }
+}
+
+void app_main(void)
+{
+    xTaskCreate(adc_read_task, "adc_read_task", 4*1024, NULL, 5, NULL);
+    xTaskCreate(cube_task, "cube_task", 4*1024, NULL, 5, NULL);
+    // 启动调度器
+    vTaskStartScheduler();
 }
