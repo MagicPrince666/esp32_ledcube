@@ -17,6 +17,7 @@
 #include "driver/gpio.h"
 #include "esp_adc/adc_continuous.h"
 #include "esp_log.h"
+#include "contrl.h"
 
 /*
  This code displays some fancy graphics on the 320x240 LCD on an ESP-WROVER_KIT board.
