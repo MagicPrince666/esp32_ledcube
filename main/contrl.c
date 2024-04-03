@@ -79,9 +79,9 @@ void hc595_write(uint8_t dat)
     unsigned char i;
     for (i = 0; i < 8; i++) {
         if ((dat << i) & 0x80) {
-            gpio_set_level(hc595_dat, 0);
-        } else {
             gpio_set_level(hc595_dat, 1);
+        } else {
+            gpio_set_level(hc595_dat, 0);
         }
 
         gpio_set_level(hc595_sh, 1);
