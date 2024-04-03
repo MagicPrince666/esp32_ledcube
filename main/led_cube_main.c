@@ -271,16 +271,16 @@ void app_main(void)
         char unit[] = EXAMPLE_ADC_UNIT_STR(EXAMPLE_ADC_UNIT);
 
         while (1) {
-            rotating_mycube_(1);
-            mycube(20); // 上善若水
+            // rotating_mycube_(1);
+            // mycube(5); // 上善若水
             for(int i = 0; i < 3; i++) { //落下一滴眼泪 两滴 三滴
-                cube_water1(8);
+                cube_water1(3);
             }
-            for(int i = 0; i < 5; i++) { //顿时下起了大雨
-                rain_cube(5);
+            for(int i = 0; i < 3; i++) { //顿时下起了大雨
+                rain_cube(3);
             }
             for(int i = 0; i < 3; i++) { //浪涛翻涌
-                _sin_cube(sin_cube_table, 14, 6);
+                _sin_cube(sin_cube_table, 14, 2);
             }
             ret = adc_continuous_read(handle, result, EXAMPLE_READ_LEN, &ret_num, 0);
             if (ret == ESP_OK) {
@@ -301,7 +301,7 @@ void app_main(void)
                  * To avoid a task watchdog timeout, add a delay here. When you replace the way you process the data,
                  * usually you don't need this delay (as this task will block for a while).
                  */
-                vTaskDelay(1);
+                // vTaskDelay(1);
             } else if (ret == ESP_ERR_TIMEOUT) {
                 // We try to read `EXAMPLE_READ_LEN` until API returns timeout, which means there's no available data
                 break;

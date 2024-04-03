@@ -4,9 +4,11 @@
 
 #define USE_SPI_CTRL
 
+#ifndef USE_SPI_CTRL
 static int hc595_dat     = -1;
 static int hc595_st      = -1;
 static int hc595_sh      = -1;
+#endif
 static int gpio_layer[8] = {-1};
 
 #define PIN_NUM_MISO 22
@@ -24,6 +26,7 @@ static int gpio_layer[8] = {-1};
 #define PIN_FLOW8 5
 
 spi_device_handle_t g_spi_handle;
+spi_transaction_t g_trans;
 
 int init_gpio(void)
 {
@@ -35,14 +38,20 @@ int init_gpio(void)
         .sclk_io_num = PIN_NUM_CLK,
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
-        .max_transfer_sz = 64
+        .max_transfer_sz = 8
     };
     spi_device_interface_config_t devcfg = {
         .clock_speed_hz = 20 * 1000 * 1000,     // Clock out at 10 MHz
         .mode = 0,                              // SPI mode 0
         .spics_io_num = PIN_NUM_CS,             // CS pin
-        .queue_size = 7,                        // We want to be able to queue 7 transactions at a time
+        .queue_size = 8,                        // We want to be able to queue 8 transactions at a time
     };
+
+    g_trans.flags = SPI_TRANS_USE_TXDATA,      // 传输标志
+    g_trans.cmd = 0,                           // 命令
+    g_trans.length = 8 * 8,                    // 传输数据长度（以位为单位）
+    g_trans.user = NULL,                       // 用户数据
+
     //Initialize the SPI bus
     ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
     ESP_ERROR_CHECK(ret);
@@ -105,6 +114,20 @@ void hc595_write(uint8_t dat)
         gpio_set_level(hc595_sh, 1);
         gpio_set_level(hc595_sh, 0);
     }
+#endif
+}
+
+void hc595_write_buff(uint8_t dat[8])
+{
+#ifdef USE_SPI_CTRL
+    // 发送和接收数据
+    g_trans.tx_buffer = dat,                   // 发送缓冲区
+    spi_device_polling_transmit(g_spi_handle, &g_trans);
+#else
+    for (uint8_t i = 0; i < 8; i++) {
+        hc595_write(dat[i])
+    }
+    hc595out();
 #endif
 }
 

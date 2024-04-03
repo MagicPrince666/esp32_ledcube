@@ -19,16 +19,19 @@ void cube_water1(int tv)
         {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
         {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
-    unsigned int x, y, z;
     int times = tv;
-    for (z = 0; z < 8; z++) {
+    for (uint8_t z = 0; z < 8; z++) {
         cube[z][3] = 0x08;
         while (times--) {
-            for (y = 0; y < 8; y++) {
-                for (x = 0; x < 8; x++) {
+            for (uint8_t y = 0; y < 8; y++) {
+#if 1
+                for (uint8_t x = 0; x < 8; x++) {
                     hc595_write(cube[y][x]);
                 }
                 hc595out();
+#else
+                hc595_write_buff(cube[y]);
+#endif
                 cen_on(y);
                 vTaskDelay(10 / portTICK_PERIOD_MS);
                 cen_on(8);
@@ -42,7 +45,7 @@ void cube_water1(int tv)
         times = tv;
     }
 
-    for (z = 0; z < 5; z++) {
+    for (uint8_t z = 0; z < 5; z++) {
         switch (z) {
         case 0:
             cube[7][4] = 0x08;
@@ -89,8 +92,8 @@ void cube_water1(int tv)
         }
 
         while (times--) {
-            for (y = 0; y < 8; y++) {
-                for (x = 0; x < 8; x++) {
+            for (uint8_t y = 0; y < 8; y++) {
+                for (uint8_t x = 0; x < 8; x++) {
                     hc595_write(cube[y][x]);
                 }
                 hc595out();
