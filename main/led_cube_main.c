@@ -52,7 +52,9 @@ static adc_channel_t channel[2] = {ADC_CHANNEL_0, ADC_CHANNEL_3};
 static TaskHandle_t s_task_handle;
 static const char *TAG = "EXAMPLE";
 
+#define CUBE_MAX_MODE 2
 uint8_t g_mode = 0;
+bool g_light_switch = false;
 
 static bool IRAM_ATTR s_conv_done_cb(adc_continuous_handle_t handle, const adc_continuous_evt_data_t *edata, void *user_data)
 {
@@ -239,6 +241,7 @@ static void adc_read_task(void *param)
 {
     esp_err_t ret;
     uint32_t ret_num                 = 0;
+    uint8_t last_key = 0;
     uint8_t result[EXAMPLE_READ_LEN] = {0};
     memset(result, 0xcc, EXAMPLE_READ_LEN);
 
@@ -252,6 +255,8 @@ static void adc_read_task(void *param)
     };
     ESP_ERROR_CHECK(adc_continuous_register_event_callbacks(handle, &cbs, NULL));
     ESP_ERROR_CHECK(adc_continuous_start(handle));
+    uint32_t last_ch0_data = 0;
+    uint32_t last_ch3_data = 0;
 
     while (1) {
         /**
@@ -266,21 +271,43 @@ static void adc_read_task(void *param)
 
         char unit[] = EXAMPLE_ADC_UNIT_STR(EXAMPLE_ADC_UNIT);
         while (1) {
-            if (gpio_get_level(PIN_GPIO_KEY) == 0) {
-                ESP_LOGI(TAG, "Button pressed!");
-            } else {
-                ESP_LOGI(TAG, "Button relese!");
+            uint8_t gpio_key = gpio_get_level(PIN_GPIO_KEY);
+            if (gpio_key != last_key) {
+                last_key = gpio_key;
+                if (gpio_key == 0) {
+                    g_mode++;
+                    if (g_mode > CUBE_MAX_MODE) {
+                        g_mode = 0;
+                    }
+                    ESP_LOGI(TAG, "SHOW MODE %d", g_mode);
+                }   
             }
             ret = adc_continuous_read(handle, result, EXAMPLE_READ_LEN, &ret_num, 0);
             if (ret == ESP_OK) {
-                ESP_LOGI("TASK", "ret is %x, ret_num is %" PRIu32 " bytes", ret, ret_num);
+                // ESP_LOGI("TASK", "ret is %x, ret_num is %" PRIu32 " bytes", ret, ret_num);
                 for (int i = 0; i < ret_num; i += SOC_ADC_DIGI_RESULT_BYTES) {
                     adc_digi_output_data_t *p = (adc_digi_output_data_t *)&result[i];
                     uint32_t chan_num         = EXAMPLE_ADC_GET_CHANNEL(p);
                     uint32_t data             = EXAMPLE_ADC_GET_DATA(p);
                     /* Check the channel number validation, the data is invalid if the channel num exceed the maximum channel */
                     if (chan_num < SOC_ADC_CHANNEL_NUM(EXAMPLE_ADC_UNIT)) {
-                        ESP_LOGI(TAG, "Unit: %s, Channel: %" PRIu32 ", Value: %" PRIx32, unit, chan_num, data);
+                        // ESP_LOGI(TAG, "Unit: %s, Channel: %" PRIu32 ", Value: %" PRIx32, unit, chan_num, data);
+                        if (chan_num == 0) {
+                            if (last_ch0_data != data) {
+                                last_ch0_data = data;
+                                ESP_LOGI(TAG, "Unit: %s, Channel: %" PRIu32 ", Value: %" PRIx32, unit, chan_num, data);
+                            }
+                        } else if (chan_num == 3) {
+                            if (last_ch3_data != data) {
+                                last_ch3_data = data;
+                                if (last_ch3_data == 0) {
+                                    g_light_switch = false;
+                                } else {
+                                    g_light_switch = true;
+                                }
+                                ESP_LOGI(TAG, "Unit: %s, Channel: %" PRIu32 ", Value: %" PRIx32, unit, chan_num, data);
+                            }
+                        }
                     } else {
                         ESP_LOGW(TAG, "Invalid data [%s_%" PRIu32 "_%" PRIx32 "]", unit, chan_num, data);
                     }
@@ -290,7 +317,7 @@ static void adc_read_task(void *param)
                  * To avoid a task watchdog timeout, add a delay here. When you replace the way you process the data,
                  * usually you don't need this delay (as this task will block for a while).
                  */
-                vTaskDelay(100);
+                vTaskDelay(10);
             } else if (ret == ESP_ERR_TIMEOUT) {
                 // We try to read `EXAMPLE_READ_LEN` until API returns timeout, which means there's no available data
                 break;
@@ -308,32 +335,77 @@ static void cube_task(void *param)
 
     while (1) {
         if (g_mode == 1) {
-            _display(1000, 0xFF);
+            // 照明模式
+            _display(10, 0xFF);
+        } else if (g_mode == 2) {
+            // 感应模式
+            if (g_light_switch) {
+                _display(10, 0xFF);
+            } else {
+                _display(10, 0x00);
+            }
         } else {
+            // 动画模式
             // rotating_mycube_(1);
             for(int i = 0; i < 5; i++) {
                 blew_heart(30);
+                if (g_mode != 0) {
+                    continue;
+                }
             }
             // mycube(30); // 上善若水
             for (int i = 0; i < 3; i++) {
                 cube_water1(18);
+                if (g_mode != 0) {
+                    continue;
+                }
             }
             for (int i = 0; i < 5; i++) {
                 rain_cube(20);
+                if (g_mode != 0) {
+                    continue;
+                }
             }
             rotating_mycube_(20);
+            if (g_mode != 0) {
+                continue;
+            }
             for (int i = 0; i < 3; i++) {
                 general(warping, 15, 20);
+                if (g_mode != 0) {
+                    continue;
+                }
             }
             general(IVU_1, 21, 20);
+            if (g_mode != 0) {
+                continue;
+            }
             for(int i = 0; i < 3; i++) {
                 _sin_cube(sin_cube_table, 14, 20);
+                if (g_mode != 0) {
+                    continue;
+                }
             }
             displayking(20);
+            if (g_mode != 0) {
+                continue;
+            }
             _hourglass( king,8,20);
+            if (g_mode != 0) {
+                continue;
+            }
             general(shandian, 22, 20);
+            if (g_mode != 0) {
+                continue;
+            }
             general(cube, 26, 20);
+            if (g_mode != 0) {
+                continue;
+            }
             general(cube2, 8, 20);
+            if (g_mode != 0) {
+                continue;
+            }
         }
     }
 }
