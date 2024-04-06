@@ -47,10 +47,11 @@ int init_gpio(void)
         .queue_size = 8,                        // We want to be able to queue 8 transactions at a time
     };
 
-    g_trans.flags = SPI_TRANS_USE_TXDATA,      // 传输标志
-    g_trans.cmd = 0,                           // 命令
+    // g_trans.flags = SPI_TRANS_USE_TXDATA,      // 传输标志
+    // g_trans.cmd = 0,                           // 命令
     g_trans.length = 8 * 8,                    // 传输数据长度（以位为单位）
     g_trans.user = NULL,                       // 用户数据
+    g_trans.rx_buffer = NULL;
 
     //Initialize the SPI bus
     ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
