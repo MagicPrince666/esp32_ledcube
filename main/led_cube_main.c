@@ -119,6 +119,48 @@ void _display(u_int16_t time, u_int8_t dat)
     }
 }
 
+void light_on(u_int16_t time)
+{
+    unsigned char x, y, z;
+    int times = 0;
+    for (z = 0; z < 1; z++) {
+        while (times < time) {
+            for (y = 0; y < 8; y++) {
+                for (x = 0; x < 8; x++) {
+                    if (x == 0 || x == 7) {
+                        hc595_write(0xFF);
+                    } else {
+                        hc595_write(0x81);
+                    }
+                }
+                hc595out();
+                usleep(500);
+                cen_on(9);
+            }
+            times++;
+        }
+    }
+}
+
+void light_off(u_int16_t time)
+{
+    unsigned char x, y, z;
+    int times = 0;
+    for (z = 0; z < 1; z++) {
+        while (times < time) {
+            for (y = 0; y < 8; y++) {
+                for (x = 0; x < 8; x++) {
+                    hc595_write(0x00);
+                }
+                hc595out();
+                usleep(500);
+                cen_on(9);
+            }
+            times++;
+        }
+    }
+}
+
 const unsigned char test[][8][8] = {
     {{0xFF, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0xFF}, // 8
      {0x00, 0x7E, 0x42, 0x42, 0x42, 0x42, 0x7E, 0x00},
@@ -340,9 +382,9 @@ static void cube_task(void *param)
         } else if (g_mode == 2) {
             // 感应模式
             if (g_light_switch) {
-                _display(10, 0xFF);
+                light_on(10);
             } else {
-                _display(10, 0x00);
+                light_off(10);
             }
         } else {
             // 动画模式
